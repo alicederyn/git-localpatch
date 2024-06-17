@@ -1,0 +1,7 @@
+#!/bin/bash
+origname=$(basename $1)
+patchfile=$2
+tmpdir="$(mktemp -d)"
+trap 'rm -rf -- "$tmpdir"' EXIT
+cat > "$tmpdir/$origname"
+patch --silent -o- "$tmpdir/$origname" $patchfile

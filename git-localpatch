@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: git localpatch <file>"
+  echo
+  echo "Configures smudge/clean to ignore the differences that have been made to <file>"
+  exit 1
+fi
+
+FILE=$1
+PATCHFILE="$FILE.patch"
+
+if [[ -e $PATCHFILE ]]; then
+  echo "Error: $FILE already patched (updates not yet supported)" >&2
+  exit 1
+fi
+
+git diff $FILE > $PATCHFILE
+echo "/$FILE filter=patch" >> .git/info/attributes
+echo "/$PATCHFILE" >> .git/info/exclude
+git restore $FILE
